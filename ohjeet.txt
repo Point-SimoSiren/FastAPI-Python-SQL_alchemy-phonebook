@@ -1,0 +1,38 @@
+
+Luo sovellukselle kansio. Mene kansioon komentorivillä.
+Anna komennot:
+
+python -m venv venv
+
+venv\scripts\activate
+
+pip install fastapi[standard]
+pip install sqlalchemy
+
+Suorittaminen:
+
+Kun ajat komennon
+uvicorn main:app --reload
+niin oletusosoite on:
+http://127.0.0.1:8000
+
+Jos haluaa ottaa yhteyden toiselta koneelta aja:
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+--- "SWAGGER" / Open API -------
+
+FastAPI tekee OpenAPI-skeeman automaattisesti, kun sinulla on app = FastAPI().
+Eli sinun ei tarvitse erikseen asentaa mitään lisää – se on sisäänrakennettuna.
+
+Kun käynnistät palvelimen (uvicorn main:app --reload), saat nämä:
+
+OpenAPI JSON:
+http://127.0.0.1:8000/openapi.json
+
+(Tämä on se koneystävällinen OpenAPI 3.0 -määrittely)
+
+Swagger UI (interaktiivinen käyttöliittymä):
+http://127.0.0.1:8000/docs
+
+ReDoc-dokumentaatio:
+http://127.0.0.1:8000/redoc
