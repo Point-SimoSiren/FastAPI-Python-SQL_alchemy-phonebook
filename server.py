@@ -3,14 +3,23 @@ from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # --- Tietokanta ---
-DATABASE_URL = "sqlite:///./phonebook.db"
+# SQLite käytössä:
+#DATABASE_URL = "sqlite:///./phonebook.db"
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# PostgreSQL käytössä:
+DATABASE_URL = "postgresql+psycopg2://postgres:password@localhost:5432/phonebookdb"
+
+#SQLite
+#engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
+#PostgreSQL
+engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# --- Malli ---
+# --- Modelit ---
 class Phonebook(Base):
     __tablename__ = "phonebook"
 

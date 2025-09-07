@@ -8,6 +8,10 @@ venv\scripts\activate
 
 pip install fastapi[standard]
 pip install sqlalchemy
+Jos haluat käyttää postgreSQL:ää, lisäksi:
+pip install psycopg2-binary
+
+pip freeze > requirements.txt #tallettaa kuuluvat kirjastot luettelona
 
 Lisää sitten tässä repossa olevan kaltainen server.py tiedosto projektiin,
 sekä myös .gitignore samalla tavalla kuin tässä repossa ja samoilla sisällöillä.
