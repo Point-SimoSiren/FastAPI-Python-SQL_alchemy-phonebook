@@ -9,6 +9,9 @@ venv\scripts\activate
 pip install fastapi[standard]
 pip install sqlalchemy
 
+Lisää sitten tässä repossa olevan kaltainen server.py tiedosto projektiin,
+sekä myös .gitignore samalla tavalla kuin tässä repossa ja samoilla sisällöillä.
+
 Suorittaminen:
 
 Kun ajat komennon
