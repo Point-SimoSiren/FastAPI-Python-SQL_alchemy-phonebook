@@ -1,19 +1,19 @@
 from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, create_engine, or_
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # --- Tietokanta ---
 # SQLite käytössä:
-#DATABASE_URL = "sqlite:///./phonebook.db"
+DATABASE_URL = "sqlite:///./phonebook.db"
 
 # PostgreSQL käytössä:
-DATABASE_URL = "postgresql+psycopg2://postgres:Simppa7777!@localhost:5432/phonebookdb"
+#DATABASE_URL = "postgresql+psycopg2://postgres:Simppa7777!@localhost:5432/phonebookdb"
 
 #SQLite
-#engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
 #PostgreSQL
-engine = create_engine(DATABASE_URL)
+#engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -67,10 +67,17 @@ def get_entry(entry_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Entry not found")
     return {"id": entry.id, "firstname": entry.firstname, "lastname": entry.lastname, "number": entry.number}
 
+
 # HAKU SUKUNIMELLÄ
 @app.get("/phonebook/search/{search_term}", response_model=list[dict])
 def get_entries_by_lastname(search_term: str, db: Session = Depends(get_db)):
-    entries = db.query(Phonebook).filter(Phonebook.lastname == search_term).all()
+    #Hakee sukunimellä jos täydellinen täsmääminen
+    #entries = db.query(Phonebook).filter(Phonebook.lastname == search_term).all()
+
+    #Hakee suku tai etunimen osalla ja on riippumaton kirjasinten koosta
+    entries = db.query(Phonebook).filter(or_(
+        Phonebook.lastname.ilike(f"%{search_term}%") ,
+        Phonebook.firstname.ilike(f"%{search_term}%"))).all()
     if not entries:
         raise HTTPException(status_code=404, detail="Entry not found")
     return [{"id": e.id, "firstname": e.firstname, "lastname": e.lastname, "number": e.number} for e in entries]
