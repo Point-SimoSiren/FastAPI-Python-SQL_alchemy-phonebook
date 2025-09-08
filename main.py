@@ -7,7 +7,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 #DATABASE_URL = "sqlite:///./phonebook.db"
 
 # PostgreSQL käytössä:
-DATABASE_URL = "postgresql+psycopg2://postgres:password@localhost:5432/phonebookdb"
+DATABASE_URL = "postgresql+psycopg2://postgres:Simppa7777!@localhost:5432/phonebookdb"
 
 #SQLite
 #engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -45,13 +45,13 @@ def get_db():
 
 
 # --- API reitit ---
-@app.post("/phonebook/", response_model=dict)
+@app.post("/phonebook/", response_model=str)
 def create_entry(firstname: str, lastname: str, number: str, db: Session = Depends(get_db)):
     entry = Phonebook(firstname=firstname, lastname=lastname, number=number)
     db.add(entry)
     db.commit()
     db.refresh(entry)
-    return {"id": entry.id, "firstname": entry.firstname, "lastname": entry.lastname, "number": entry.number}
+    return "Added new contact " + entry.firstname + " " + entry.lastname
 
 
 @app.get("/phonebook/", response_model=list[dict])
@@ -66,6 +66,14 @@ def get_entry(entry_id: int, db: Session = Depends(get_db)):
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
     return {"id": entry.id, "firstname": entry.firstname, "lastname": entry.lastname, "number": entry.number}
+
+# HAKU SUKUNIMELLÄ
+@app.get("/phonebook/search/{search_term}", response_model=list[dict])
+def get_entries_by_lastname(search_term: str, db: Session = Depends(get_db)):
+    entries = db.query(Phonebook).filter(Phonebook.lastname == search_term).all()
+    if not entries:
+        raise HTTPException(status_code=404, detail="Entry not found")
+    return [{"id": e.id, "firstname": e.firstname, "lastname": e.lastname, "number": e.number} for e in entries]
 
 
 @app.delete("/phonebook/{entry_id}", response_model=dict)
